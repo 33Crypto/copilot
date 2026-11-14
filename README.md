@@ -4,6 +4,8 @@ The Python implementation is in `isud_decoder.py`. An Edge popup extension is
 available in `edge-extension/` and supports Caesar, hex, Base64, trig offset,
 Lock33 pipe, and Morse encodings.
 `tanx.ts` exports the identity witness, derived values, and Lock33 pipe codec.
+The Go package in `go-lock33id/` provides the same helpers and codec; run its
+tests with `cd go-lock33id && go test ./...`.
 
 ## Load the extension in Microsoft Edge
 
