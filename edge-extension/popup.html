@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ISUD Decoder</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <h1>ISUD Decoder</h1>
+      <form id="decoder-form">
+        <label for="operation">Operation</label>
+        <select id="operation">
+          <option value="encode">Encode</option>
+          <option value="decode">Decode</option>
+        </select>
+
+        <label for="code-type">Encoding</label>
+        <select id="code-type">
+          <option value="caesar">Caesar</option>
+          <option value="hex">Hex</option>
+          <option value="base64">Base64</option>
+          <option value="trig_offset">Trig offset</option>
+          <option value="lock33-pipe">Lock33 pipe</option>
+          <option value="morse">Morse</option>
+        </select>
+
+        <label for="angle">Angle (radians)</label>
+        <input id="angle" type="number" step="any" value="0.7853981633974483" required>
+
+        <label for="input">Text or encoded payload</label>
+        <textarea id="input" rows="5"></textarea>
+
+        <label for="witness">Claimed witness (optional for decode)</label>
+        <input id="witness" type="number" step="any">
+
+        <button id="submit" type="submit">Encode</button>
+      </form>
+
+      <label for="output">Result</label>
+      <textarea id="output" rows="5" readonly></textarea>
+      <label for="result-witness">Payload witness</label>
+      <input id="result-witness" type="text" readonly>
+      <p id="status" role="status" aria-live="polite"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

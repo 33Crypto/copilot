@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "ISUD Decoder",
+  "version": "1.0.0",
+  "description": "Encode and decode text with the ISUD encoding families.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ISUD Decoder"
+  }
+}

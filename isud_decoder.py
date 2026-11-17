@@ -91,6 +91,26 @@ def decode_trig_offset(payload: str, x: float) -> str:
     seed = derive_seed(x)
     return "".join(chr(ord(c) - (seed % 20) - 1) for c in payload)
 
+def encode_lock33_pipe(text: str, x: float) -> str:
+    """Encode shifted Unicode code points as pipe-separated hexadecimal."""
+    shift = derive_seed(x) % 33 + 1
+    return "|".join(f"{ord(c) + shift:x}" for c in text)
+
+def decode_lock33_pipe(payload: str, x: float) -> str:
+    """Decode pipe-separated hexadecimal Unicode code points."""
+    if not payload:
+        return ""
+    shift = derive_seed(x) % 33 + 1
+    decoded = []
+    for token in payload.split("|"):
+        if not token or any(char not in string.hexdigits for char in token):
+            raise ValueError("Invalid lock33-pipe payload")
+        codepoint = int(token, 16) - shift
+        if not 0 <= codepoint <= 0x10FFFF:
+            raise ValueError("Invalid lock33-pipe code point")
+        decoded.append(chr(codepoint))
+    return "".join(decoded)
+
 # Morse (simple subset)
 MORSE = {
     "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".",
@@ -106,7 +126,10 @@ def encode_morse(text: str, x: float) -> str:
     return " ".join(MORSE.get(c.upper(), "?") for c in text)
 
 def decode_morse(payload: str, x: float) -> str:
-    return "".join(MORSE_REV.get(tok, "?") for tok in payload.split())
+    return "".join(
+        " " if tok == "/" else MORSE_REV.get(tok, "?")
+        for tok in payload.split()
+    )
 
 # ---------------------------------------------------------------------------
 # Witness validation
@@ -131,6 +154,7 @@ ENCODERS: Dict[str, Callable] = {
     "hex": encode_hex,
     "base64": encode_base64,
     "trig_offset": encode_trig_offset,
+    "lock33-pipe": encode_lock33_pipe,
     "morse": encode_morse,
 }
 
@@ -139,6 +163,7 @@ DECODERS: Dict[str, Callable] = {
     "hex": decode_hex,
     "base64": decode_base64,
     "trig_offset": decode_trig_offset,
+    "lock33-pipe": decode_lock33_pipe,
     "morse": decode_morse,
 }
 
@@ -174,7 +199,9 @@ def run_tests():
     samples = [
         ("HELLO WORLD", "caesar"),
         ("secret message", "trig_offset"),
+        ("Lock33 ☃", "lock33-pipe"),
         ("SOS", "morse"),
+        ("HELLO WORLD", "morse"),
         ("Hello", "hex"),
         ("Test data", "base64"),
     ]
